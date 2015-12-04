@@ -36,7 +36,7 @@ public class JupyterNotebookServerGenerator extends DefaultCodegen implements Co
     for (KernelCodegenInfo kernelInfo :loader) {
       kernelMap.put(kernelInfo.getName(), kernelInfo);
     }
-    cliOptions.add(new CliOption("kernel", "ss"));
+    cliOptions.add(new CliOption("kernel", "The name of the kernel which will back the notebook."));
   }
   
   @Override
