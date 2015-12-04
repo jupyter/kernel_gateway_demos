@@ -1,0 +1,39 @@
+{
+    "cells": [
+        {{#operations}}
+            {{#operation}}
+                {
+                "cell_type": "code",
+                "execution_count": null,
+                "metadata": {
+                "collapsed": false
+                },
+                "outputs": [],
+                "source": [
+                "{{kernelLangComment}} {{httpMethod}} /{{baseName}}{{#subresourceOperation}}{{path}}{{/subresourceOperation}}"
+                ]
+                },
+            {{/operation}}
+            {
+            "cell_type": "code",
+            "execution_count": null,
+            "metadata": {
+            "collapsed": false
+            },
+            "outputs": [],
+            "source": [
+            ""
+            ]
+            }
+        {{/operations}}
+    ],
+    "metadata": {
+        "kernelspec": {
+            "display_name": "{{kernelDisplayName}}",
+            "language": "{{kernelLanguage}}",
+            "name": "{{kernelName}}"
+        }
+    },
+    "nbformat": 4,
+    "nbformat_minor": 0
+}
