@@ -1,0 +1,21 @@
+FROM jupyter/all-spark-notebook:dbb9c7b50531
+
+USER jovyan
+
+# Install Kernel Gateway
+RUN pip install git+https://github.com/jupyter-incubator/kernel_gateway
+
+# Configure container startup
+ENTRYPOINT ["tini", "--", "jupyter", "kernelgateway"]
+
+LABEL version="{{appVersion}}"
+LABEL service="{{appName}}"
+
+CMD [ \
+        "--KernelGatewayApp.api=notebook-http", \
+        "--KernelGatewayApp.seed_uri=/srv/notebooks/{{notebookFile}}", \
+        "--KernelGatewayApp.ip=0.0.0.0" \
+    ]
+
+ADD {{notebookFile}} /srv/notebooks/
+

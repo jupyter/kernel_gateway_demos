@@ -1,107 +1,128 @@
 package org.jupyter.server;
 
+import com.google.common.base.Joiner;
+import com.google.common.base.Optional;
+import com.google.common.collect.ImmutableMap;
 import io.swagger.codegen.*;
 import io.swagger.models.Operation;
+import io.swagger.models.Swagger;
 import org.jupyter.server.kernels.KernelCodegenInfo;
 import io.swagger.codegen.CodegenConfig;
-
+import java.io.File;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import static org.jupyter.server.JupyterCodegenContants.*;
+import static org.jupyter.server.JupyterCodegenContants.CLIArgs.*;
+import static org.jupyter.server.JupyterCodegenContants.Messages.*;
 
 public class JupyterNotebookServerGenerator extends DefaultCodegen implements CodegenConfig {
-  protected String sourceFolder = "src";
-  protected String kernelName = "python3";
-  protected Map<String, KernelCodegenInfo> kernelMap = new HashMap<String, KernelCodegenInfo>();
-
-  public CodegenType getTag() {
-    return CodegenType.SERVER;
-  }
-
-  public String getName() {
-    return "jupyter";
-  }
-
-  public String getHelp() {
-    return "Generates a jupyter notebook with comments for turning the notebook into a REST API implementation. For more info see: https://github.com/jupyter-incubator/kernel_gateway";
-  }
-
   public JupyterNotebookServerGenerator() {
     super();
-    outputFolder = "target/swagger";
-    apiTemplateFiles.put("api.mustache", ".ipynb");
-    templateDir = "jupyter-swagger-codegen";
-
-    ServiceLoader<KernelCodegenInfo> loader = ServiceLoader.load(KernelCodegenInfo.class);
-    for (KernelCodegenInfo kernelInfo :loader) {
-      kernelMap.put(kernelInfo.getName(), kernelInfo);
-    }
-    cliOptions.add(new CliOption("kernel", "The name of the kernel which will back the notebook."));
+    outputFolder = DEFAULT_OUTPUT_DIR;
+    templateDir = TEMPLATE_DIR;
+    apiTemplateFiles.put(API_MUSTACHE, NOTEBOOK_FILE_EXTENSION);
+    cliOptions.add(CLI_ARG_KERNEL);
   }
   
   @Override
-  public void processOpts() {
-    super.processOpts();
-    if (additionalProperties.containsKey("kernel")) {
-      kernelName = (String) additionalProperties.get("kernel");
+  public CodegenType getTag() { return CodegenType.SERVER; }
+
+  @Override
+  public String getName() { return GENERATOR_NAME; }
+
+  @Override
+  public String getHelp() { return HELP_STRING; }
+  
+  @Override
+  public void preprocessSwagger(Swagger swagger) {
+    super.preprocessSwagger(swagger);
+    additionalProperties.putAll(_getAdditionalProps(swagger, _getKernel()));
+
+    for(Map.Entry<String, String> entry: SupportFiles.entrySet()) {
+      supportingFiles.add(
+          new SupportingFile(entry.getKey(), supportingFileDir(), entry.getValue())
+      );  
     }
-
-    validateKernelName(kernelName);
-
-
-    System.out.println("kernel is: " + kernelName);
-    KernelCodegenInfo kernel = kernelMap.get(kernelName);
-    additionalProperties.put("kernelDisplayName", kernel.getDisplayName());
-    additionalProperties.put("kernelLanguage", kernel.getLanguage());
-    additionalProperties.put("kernelName", kernel.getName());
-    additionalProperties.put("kernelLangComment", kernel.getLanguageComment());
   }
   
   @Override
   public String apiFileFolder() {
-    return outputFolder + "/" + kernelName + "/" + sourceFolder;
+    return Joiner.on(File.separator).skipNulls()
+        .join(outputFolder, _getKernelName(), _getNotebookName(), SRC_DIR);
   }
-  
+
   @Override
   public void addOperationToGroup(String tag, String resourcePath, Operation operation, CodegenOperation co, Map<String, List<CodegenOperation>> operations) {
     String baseResource = resourcePath;
-    if (baseResource.startsWith("/")) {
+    if (baseResource.startsWith(FORWARD_SLASH)) {
       baseResource = baseResource.substring(1);
     }
-    int pos = baseResource.indexOf("/");
+    int pos = baseResource.indexOf(FORWARD_SLASH);
     if (pos > 0) {
       baseResource = baseResource.substring(0, pos);
     }
 
-    if ("".equals(baseResource)) {
-      baseResource = "default";
+    if (EMPTY_STRING.equals(baseResource)) {
+      baseResource = DEFAULT;
     } else {
-      if (co.path.startsWith("/" + baseResource)) {
-        co.path = co.path.substring(("/" + baseResource).length());
+      if (co.path.startsWith(FORWARD_SLASH + baseResource)) {
+        co.path = co.path.substring((FORWARD_SLASH + baseResource).length());
         co.path = _parameterizeURL(co.path);
       }
       co.subresourceOperation = !co.path.isEmpty();
     }
-    
-    List<CodegenOperation> opList = operations.get(baseResource);
-    if (opList == null) {
-      opList = new ArrayList<>();
-      operations.put(baseResource, opList);
-    }
-    opList.add(co);
-
     co.baseName = baseResource;
+    List<CodegenOperation> opsList =  Optional.
+        fromNullable(operations.get(_getNotebookName())).
+        or(new ArrayList<CodegenOperation>());
+    
+    opsList.add(co);
+    operations.put(_getNotebookName(),opsList);
+  }
+  
+  private KernelCodegenInfo _getKernel() {
+    _validateKernelName(_getKernelName());
+    return KernelCodegenImpls.get(_getKernelName());
+  }
+  
+  private String _getNotebookName() {
+    return Optional.of(additionalProperties.get(NOTEBOOK_NAME))
+        .or(DEFAULT_NOTEBOOK_NAME).toString();
   }
 
-  private void validateKernelName(String kernelName) {
-    if(!kernelMap.containsKey(kernelName)) {
-      System.err.println(String.format("Kernel %s is not supported.", kernelName));
-      System.err.println("Supported kernels are: ");
-      for(String kernel: kernelMap.keySet()) {
-        System.err.println(String.format("\t%s", kernel));
-      }
+  private String _getKernelName() {
+    String name = Optional
+        .of(additionalProperties.get(CLIArgs.CLI_ARG_KERNEL_ID))
+        .or(DEFAULT_KERNEL_NAME).toString();
+    return name;
+  }
+
+  private String supportingFileDir() {
+    return String.format(SUPPORTING_FILES_DIR, _getKernelName(), _getNotebookName());
+  }
+
+  private void _validateKernelName(String name) {
+    if(!KernelCodegenImpls.containsKey(name)) {
+      System.err.println(String.format(KERNEL_NOT_SUPPORTED, name));
+      System.err.println(SUPPORT_KERNELS_LIST);
       System.exit(1);
     }
+  }
+
+  private static Map<String, Object> _getAdditionalProps(Swagger swagger, KernelCodegenInfo kernel){
+    String titleWithHyphens = swagger.getInfo().getTitle()
+        .replaceAll(SPACE, HYPHEN);
+    String titleNoSpaces = titleWithHyphens.replaceAll(HYPHEN, EMPTY_STRING);
+    return ImmutableMap.<String,Object>builder().
+      put(NOTEBOOK_NAME, titleNoSpaces).
+      put(NOTEBOOK_FILE, titleNoSpaces + API_NOTEBOOK_EXTENSION).
+      put(IMAGE_NAME, titleWithHyphens.toLowerCase()).
+      put(KERNEL_DISPLAY_NAME, kernel.getDisplayName()).
+      put(KERNEL_LANGUAGE, kernel.getLanguage()).
+      put(KERNEL_NAME, kernel.getName()).
+      put(KERNEL_LANG_COMMENT, kernel.getLanguageComment())
+      .build();
   }
 
   private String _parameterizeURL(String path){
@@ -110,7 +131,7 @@ public class JupyterNotebookServerGenerator extends DefaultCodegen implements Co
     StringBuffer buf = new StringBuffer();
     while (matcher.find()) {
       buf.append(path.substring(start, matcher.start()));
-      buf.append(":");
+      buf.append(COLON);
       buf.append(matcher.group(1));
       start = matcher.end();
     }

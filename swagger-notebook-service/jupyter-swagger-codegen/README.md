@@ -14,7 +14,11 @@ From there you simply need to invoke the make targets to generate the notebook.
 make gen
 ```
 
-This will generate notebooks under `target/swagger/{KERNEL}/src/`. 
+This will generate a notebook, Dockerfile, and scripts under 
+`target/swagger/{KERNEL}/{API_NAME}/src/`. You can run `package.sh` to have a 
+docker image built with your notebook as a microservice. The image will be
+tagged with the API name and version defined in your swagger spec. After your
+image is built you can execute `run.sh` to start a container with your API.
 
 The pet store swagger spec is used by default. If you have a local swagger.json, 
 simply add it to the project and invoke the make target with 
