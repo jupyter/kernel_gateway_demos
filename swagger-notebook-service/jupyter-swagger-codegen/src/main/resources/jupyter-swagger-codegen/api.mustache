@@ -1,30 +1,35 @@
 {
     "cells": [
-        {{#operations}}
-            {{#operation}}
-                {
-                "cell_type": "code",
-                "execution_count": null,
-                "metadata": {
-                "collapsed": false
-                },
-                "outputs": [],
-                "source": [
-                "{{kernelLangComment}} {{httpMethod}} /{{baseName}}{{#subresourceOperation}}{{path}}{{/subresourceOperation}}"
-                ]
-                },
-            {{/operation}}
-            {
-            "cell_type": "code",
-            "execution_count": null,
+        {
+            "cell_type": "markdown",
             "metadata": {
-            "collapsed": false
+                "collapsed": false
             },
-            "outputs": [],
             "source": [
-            ""
+                "# {{appName}} - {{appVersion}} \n",
+                "{{appDescription}} \n"
             ]
-            }
+        }
+        {{#operations}}{{#operation}}
+            ,{
+                    "cell_type": "markdown",
+                    "metadata": {
+                        "collapsed": false
+                    },
+                    "source": [{{>operationMarkdown}}]
+                }
+                ,{
+                    "cell_type": "code",
+                    "execution_count": null,
+                    "metadata": {
+                        "collapsed": false
+                    },
+                    "outputs": [],
+                    "source": [
+                        "{{kernelLangComment}} {{httpMethod}} /{{baseName}}{{#subresourceOperation}}{{path}}{{/subresourceOperation}} \n"
+                    ]
+                }
+            {{/operation}}
         {{/operations}}
     ],
     "metadata": {

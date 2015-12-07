@@ -1,0 +1,8 @@
+{{#hasPathParams}}
+    "Path Parameters: \n\n",
+    {{#pathParams}}
+        {{#isPathParam}}"* {{paramName}} {{^required}}(optional){{/required}}{{#required}}(required){{/required}} - {{description}}\n",{{/isPathParam}}
+    {{/pathParams}}
+    "\n\n",
+{{/hasPathParams}}
+

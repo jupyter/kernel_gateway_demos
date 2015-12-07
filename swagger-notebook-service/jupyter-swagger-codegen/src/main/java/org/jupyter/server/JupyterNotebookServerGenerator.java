@@ -73,12 +73,18 @@ public class JupyterNotebookServerGenerator extends DefaultCodegen implements Co
       co.subresourceOperation = !co.path.isEmpty();
     }
     co.baseName = baseResource;
+    co.notes = _tidyString(co.notes);
+    co.summary = _tidyString(co.summary);
     List<CodegenOperation> opsList =  Optional.
         fromNullable(operations.get(_getNotebookName())).
         or(new ArrayList<CodegenOperation>());
     
     opsList.add(co);
     operations.put(_getNotebookName(),opsList);
+  }
+  
+  private String _tidyString(String value) {
+    return EMPTY_STRING.equals(value)  ? null : value;
   }
   
   private KernelCodegenInfo _getKernel() {

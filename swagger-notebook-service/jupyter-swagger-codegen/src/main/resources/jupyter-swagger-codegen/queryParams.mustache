@@ -1,0 +1,8 @@
+{{#hasQueryParams}}
+    "Query Parameters: \n\n",
+    {{#queryParams}}
+        {{#isQueryParam}}"* {{paramName}} {{^required}}(optional){{/required}}{{#required}}(required){{/required}} - {{description}}\n",{{/isQueryParam}}
+    {{/queryParams}}
+    "\n\n",
+{{/hasQueryParams}}
+

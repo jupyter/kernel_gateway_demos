@@ -1,0 +1,8 @@
+{{#hasBodyParam}}
+    "Body Parameters: \n\n",
+    {{#bodyParam}}
+        {{#isBodyParam}}"* {{paramName}} {{^required}}(optional){{/required}}{{#required}}(required){{/required}} - {{description}}\n",{{/isBodyParam}}
+    {{/bodyParam}}
+    "\n\n",
+{{/hasBodyParam}}
+
