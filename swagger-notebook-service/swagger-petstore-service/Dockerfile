@@ -3,7 +3,7 @@
 FROM jupyter/all-spark-notebook:dbb9c7b50531
 
 # Install Kernel Gateway
-RUN pip install jupyter-kernel-gateway
+RUN pip install git+https://github.com/jupyter-incubator/kernel_gateway.git
 
 # Configure container startup
 ENTRYPOINT ["tini", "--", "jupyter", "kernelgateway"]
@@ -18,6 +18,3 @@ CMD [ \
     ]
 
 ADD SwaggerPetstoreApi.ipynb /srv/notebooks/
-
-
-
