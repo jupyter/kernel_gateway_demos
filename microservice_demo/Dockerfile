@@ -8,4 +8,3 @@ RUN git clone https://github.com/jupyter-incubator/kernel_gateway.git && \
 ENV notebook=meetup_service.ipynb
 COPY ${notebook} /home/$NB_USER/work/apinotebook.ipynb
 
-ENTRYPOINT python -m kernel_gateway --KernelGatewayApp.ip='0.0.0.0' --KernelGatewayApp.seed_uri=/home/$NB_USER/work/apinotebook.ipynb --KernelGatewayApp.api=notebook-http --KernelGatewayApp.port=$PORT
