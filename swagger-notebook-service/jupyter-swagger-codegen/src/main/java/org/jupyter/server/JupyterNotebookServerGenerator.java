@@ -1,3 +1,5 @@
+// Copyright (c) Jupyter Development Team.
+// Distributed under the terms of the Modified BSD License.
 package org.jupyter.server;
 
 import com.google.common.base.Joiner;
