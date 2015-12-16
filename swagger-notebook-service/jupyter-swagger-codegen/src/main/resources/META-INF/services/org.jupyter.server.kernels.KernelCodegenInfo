@@ -1,0 +1,3 @@
+org.jupyter.server.kernels.Python3
+org.jupyter.server.kernels.Python2
+org.jupyter.server.kernels.SparkKernelCodegen

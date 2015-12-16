@@ -1,0 +1,46 @@
+{{! Copyright (c) Jupyter Development Team. }}
+{{! Distributed under the terms of the Modified BSD License. }}
+{
+    "cells": [
+        {
+            "cell_type": "markdown",
+            "metadata": {
+                "collapsed": false
+            },
+            "source": [
+                "# {{appName}} - {{appVersion}} \n",
+                "{{appDescription}} \n"
+            ]
+        }
+        {{#operations}}{{#operation}}
+            ,{
+                    "cell_type": "markdown",
+                    "metadata": {
+                        "collapsed": false
+                    },
+                    "source": [{{>operationMarkdown}}]
+                }
+                ,{
+                    "cell_type": "code",
+                    "execution_count": null,
+                    "metadata": {
+                        "collapsed": false
+                    },
+                    "outputs": [],
+                    "source": [
+                        "{{kernelLangComment}} {{httpMethod}} /{{baseName}}{{#subresourceOperation}}{{path}}{{/subresourceOperation}} \n"
+                    ]
+                }
+            {{/operation}}
+        {{/operations}}
+    ],
+    "metadata": {
+        "kernelspec": {
+            "display_name": "{{kernelDisplayName}}",
+            "language": "{{kernelLanguage}}",
+            "name": "{{kernelName}}"
+        }
+    },
+    "nbformat": 4,
+    "nbformat_minor": 0
+}
