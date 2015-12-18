@@ -14,6 +14,9 @@ LABEL service="Swagger Petstore"
 CMD [ \
         "--KernelGatewayApp.api=notebook-http", \
         "--KernelGatewayApp.seed_uri=/srv/notebooks/SwaggerPetstoreApi.ipynb", \
+        "--KernelGatewayApp.allow_origin='http://editor.swagger.io'", \
+        " --KernelGatewayApp.allow_methods='GET, POST, PUT, DELETE'", \
+        "--KernelGatewayApp.allow_headers='accept, accept-language, content-type'", \
         "--KernelGatewayApp.ip=0.0.0.0" \
     ]
 
