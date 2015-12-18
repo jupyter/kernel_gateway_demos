@@ -17,3 +17,12 @@ cd swagger-petstore-service
 # run the docker container
 ./run.sh
 ```
+
+This service can be accessed from the [swagger editor](http://editor.swagger.io).
+To get the editor to correctly interact with the API:
+* Copy the contents of `SwaggerPetstoreSpec.yaml`
+```
+cat swagger-petstore-service/SwaggerPetstoreSpec.yaml | pbcopy
+```
+* Go to http://editor.swagger.io and paste the contents into the editor
+* Modify the `host` property in the document to point to the `ip:port` of your docker container
