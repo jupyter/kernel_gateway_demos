@@ -12,3 +12,18 @@ from Python to R and Julia:
 
 * [R Scotch API](https://github.com/jupyter-incubator/kernel_gateway_demos/scotch_demo/notebooks/scotch_api_r.ipynb)
 * [Julia Scotch API](https://github.com/jupyter-incubator/kernel_gateway_demos/scotch_demo/notebooks/scotch_api_julia.ipynb)
+
+### Build the docker container
+```
+make build
+```
+
+### Run the docker container for the scotch R api
+```
+make r_api
+```
+
+### Run the docker container for the scotch Julia api
+```
+make julia_api
+```
