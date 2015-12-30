@@ -10,8 +10,8 @@ The example notebooks show how one can use the Jupyter kernel gateway in a langu
 [Scotch Api Notebook](https://github.com/jupyter-incubator/kernel_gateway/blob/master/etc/api_examples/scotch_api.ipynb)
 from Python to R and Julia:
 
-* [R Scotch API](https://github.com/jupyter-incubator/kernel_gateway_demos/scotch_demo/notebooks/scotch_api_r.ipynb)
-* [Julia Scotch API](https://github.com/jupyter-incubator/kernel_gateway_demos/scotch_demo/notebooks/scotch_api_julia.ipynb)
+* [R Scotch API](notebooks/scotch_api_r.ipynb)
+* [Julia Scotch API](notebooks/scotch_api_julia.ipynb)
 
 ### Build the docker container
 ```
