@@ -27,3 +27,17 @@ make r_api
 ```
 make julia_api
 ```
+
+### Query the API:
+To test the services point your web browser to:
+
+* http://:8888/scotches - returns a JSON representation of all available scotches
+* http://:8888/scotches/Ardbeg - returns a JSON representation of all the features of the queried scotch (Ardbeg)
+* http://:8888/scotches/Ardbeg/similar - returns a JSON representation of the most similar scotches to the one requested
+(Ardbeg)
+
+<dl>
+  <dt>Additional notes</dt>
+  <dd>As the purpose of these notebooks is to demonstrate the multilanguage support of the kernel gateway,
+  the API output may be slightly different between the various languages.</dd>
+ </dl>
