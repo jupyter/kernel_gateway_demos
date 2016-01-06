@@ -9,6 +9,7 @@ ENTRYPOINT ["tini", "--", "jupyter", "kernelgateway", "--KernelGatewayApp.api=no
 # Add notebook apis used by the kernel gateway
 ADD notebooks/scotch_api_r.ipynb /srv/notebooks/
 ADD notebooks/scotch_api_julia.ipynb /srv/notebooks/
+ADD notebooks/scotch_api_python.ipynb /srv/notebooks/
 RUN chmod -R 555 /srv/notebooks
 
 # Run container as user jovyan

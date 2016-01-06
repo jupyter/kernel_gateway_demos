@@ -6,12 +6,13 @@ implements different APIs and protocols for accessing Jupyter kernels.  We can u
 [process requests](https://github.com/jupyter-incubator/kernel_gateway#processing-requests) and transform an
  annotated notebook into a HTTP API using the Jupyter kernel gateway.
 
-The example notebooks show how one can use the Jupyter kernel gateway in a language agnostic manner by porting the
+The example notebooks show how one can use the Jupyter kernel gateway in a language agnostic manner by implementing a
 [Scotch Api Notebook](https://github.com/jupyter-incubator/kernel_gateway/blob/master/etc/api_examples/scotch_api.ipynb)
-from Python to R and Julia:
+in R, Julia, and Python:
 
 * [R Scotch API](notebooks/scotch_api_r.ipynb)
 * [Julia Scotch API](notebooks/scotch_api_julia.ipynb)
+* [Python Scotch API](notebooks/scotch_api_python.ipynb)
 
 ### Build the docker container
 ```
@@ -26,6 +27,11 @@ make r_api
 ### Run the docker container for the scotch Julia api
 ```
 make julia_api
+```
+
+### Run the docker container for the scotch Python api
+```
+make python_api
 ```
 
 ### Query the API:
