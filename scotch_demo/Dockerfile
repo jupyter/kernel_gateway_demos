@@ -1,7 +1,7 @@
 FROM jupyter/datascience-notebook
 
-# Install Kernel Gateway
-RUN pip install git+https://github.com/jupyter-incubator/kernel_gateway
+# Install latest stable Kernel Gateway
+RUN pip install jupyter_kernel_gateway
 
 # Configure container startup
 ENTRYPOINT ["tini", "--", "jupyter", "kernelgateway", "--KernelGatewayApp.api=notebook-http", "--KernelGatewayApp.ip=0.0.0.0"]
