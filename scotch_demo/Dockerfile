@@ -1,4 +1,4 @@
-FROM jupyter/datascience-notebook
+FROM jupyter/datascience-notebook:092fe70190dc
 
 # Install latest stable Kernel Gateway
 RUN pip install jupyter_kernel_gateway
