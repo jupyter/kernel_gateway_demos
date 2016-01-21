@@ -1,6 +1,6 @@
 ## Python Client Example
 
-The following code shows how to request a kernel and execute code on it using the Tornado HTTP and Websocket client library. You can find this sample in `etc/python_client_example` in this repo.
+The following code shows how to request a kernel and execute code on it using the Tornado HTTP and Websocket client library.
 
 The code here is much longer than in the NodeJS case above because there isn't a Python equivalent of `jupyter-js-services` that wraps the logic for talking the Jupyter protocol over over Websockets. (Of course, there is [jupyter/jupyter_client](https://github.com/jupyter/jupyter_client) which operates over ZeroMQ.)
 
