@@ -1,0 +1,4 @@
+# Copyright (c) Jupyter Development Team.
+# Distributed under the terms of the Modified BSD License.
+notebook==4.1
+pandas==0.17.1

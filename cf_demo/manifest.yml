@@ -1,0 +1,15 @@
+# Copyright (c) Jupyter Development Team.
+# Distributed under the terms of the Modified BSD License.
+---
+applications:
+- name: got-scotch-api
+  memory: 512M
+  instances: 1
+  domain: mybluemix.net
+  path: .
+  buildpack: https://github.com/ihuston/python-conda-buildpack
+  command: >
+    jupyter-kernelgateway --KernelGatewayApp.port=$PORT
+    --KernelGatewayApp.ip=0.0.0.0
+    --KernelGatewayApp.api=notebook-http
+    --KernelGatewayApp.seed_uri='https://raw.githubusercontent.com/jupyter-incubator/kernel_gateway_demos/master/scotch_demo/notebooks/scotch_api_python.ipynb'
