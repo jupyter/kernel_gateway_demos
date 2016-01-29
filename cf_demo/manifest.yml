@@ -5,7 +5,6 @@ applications:
 - name: got-scotch-api
   memory: 512M
   instances: 1
-  domain: mybluemix.net
   path: .
   buildpack: https://github.com/ihuston/python-conda-buildpack
   command: >
