@@ -1,3 +1,6 @@
+// Copyright (c) Jupyter Development Team.
+// Distributed under the terms of the Modified BSD License.
+
 import org.apache.spark.sql.SQLContext
 
 case class custTab(col0: Integer, col1: String, col2: String, col3: String)
