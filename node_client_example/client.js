@@ -42,5 +42,11 @@ jupyter.getKernelSpecs({ baseUrl:  baseUrl}).then((kernelSpecs) => {
             // print received messages
             console.log('Received message:', msg);
         };
+    }).catch(req => {
+        console.log('Error starting new kernel:', req.xhr.statusText);
+        process.exit(1);
     });
+}).catch((req) => {
+    console.log('Error fetching kernel specs:', req.xhr.statusText);
+    process.exit(1);
 });
