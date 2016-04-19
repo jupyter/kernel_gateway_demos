@@ -21,21 +21,32 @@ var demo_code = (demo_lang === 'scala') ? SCALA_EXAMPLE : PYTHON_EXAMPLE;
 console.log('Targeting server:', kg_host);
 console.log('Using demo lang:', demo_lang);
 
-// get info about the available kernels and start a new one
-jupyter.getKernelSpecs({ baseUrl:  baseUrl}).then((kernelSpecs) => {
+// extra headers to demo that it can be done
+var ajaxSettings = {
+    requestHeaders: {
+        'X-Some-Header': 'some-value'
+    }
+};
+
+// get info about the available kernels
+jupyter.getKernelSpecs({ 
+    baseUrl: baseUrl,
+    ajaxSettings: ajaxSettings
+}).then((kernelSpecs) => {
     console.log('Available kernelspecs:', kernelSpecs);
-    var options = {
-        baseUrl: baseUrl,
-        name: demo_lang
-    };
-    // request a kernel in the default language (python)
+
+    // request a new kernel
     console.log('Starting kernel:', demo_lang)
-    jupyter.startNewKernel(options).then((kernel) => {
+    jupyter.startNewKernel({
+        baseUrl: baseUrl,
+        name: demo_lang,
+        ajaxSettings: ajaxSettings
+    }).then((kernel) => {
         // execute some code
         console.log('Executing sample code');
         var future = kernel.execute({ code: demo_code  } );
         future.onDone = () => {
-            // quit when done
+            // quit the demo when done, but leave the kernel around
             process.exit(0);
         };
         future.onIOPub = (msg) => {
