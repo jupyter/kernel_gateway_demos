@@ -14,8 +14,6 @@ services:
       - "8080:80"
     depends_on:
       - kernel_gateway
-    links:
-      - kernel_gateway
 
   kernel_gateway:
     build:
@@ -24,3 +22,11 @@ services:
     image: jupyter/kernel-gateway
     environment:
       KG_ALLOW_ORIGIN: '*'
+
+  client:
+    build:
+      context: .
+      dockerfile: Dockerfile.client
+    image: jupyter/kernel-gateway-demo-client
+    depends_on:
+      - nginx
