@@ -1,0 +1,32 @@
+# Copyright (c) Jupyter Development Team.
+# Distributed under the terms of the Modified BSD License.
+---
+
+version: "2"
+
+services:
+  nginx:
+    build:
+      context: .
+      dockerfile: Dockerfile.nginx
+    image: jupyter/kernel-gateway-nginx
+    ports:
+      - "8080:80"
+    depends_on:
+      - kernel_gateway
+
+  kernel_gateway:
+    build:
+      context: .
+      dockerfile: Dockerfile.kg
+    image: jupyter/kernel-gateway
+    environment:
+      KG_ALLOW_ORIGIN: '*'
+
+  client:
+    build:
+      context: .
+      dockerfile: Dockerfile.client
+    image: jupyter/kernel-gateway-advanced-python-demo-client
+    depends_on:
+      - nginx
