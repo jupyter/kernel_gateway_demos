@@ -1,73 +1,32 @@
-## Python Client Example
+## Advanced Python Client Example
 
-The following code shows how to request a kernel and execute code on it using the Tornado HTTP and Websocket client library.
+The code in this example shows how to connect multiple clients to a kernel. To get started:
 
-The code here is much longer than in the NodeJS case above because there isn't a Python equivalent of `jupyter-js-services` that wraps the logic for talking the Jupyter protocol over over Websockets. (Of course, there is [jupyter/jupyter_client](https://github.com/jupyter/jupyter_client) which operates over ZeroMQ.)
+```
+git clone https://github.com/jupyter/kernel_gateway_demos
+cd kernel_gateway_demos/python_client_advanced_example
+docker-compose build
+docker-compose up
+```
 
-```python
-import os
-from tornado import gen
-from tornado.escape import json_encode, json_decode, url_escape
-from tornado.websocket import websocket_connect
-from tornado.ioloop import IOLoop
-from tornado.httpclient import AsyncHTTPClient
+On startup there is a kernel and client created. When the kernels is created, the kernel id and a command to connect 
+another client is printed. You should use this command in another terminal window. An example of this output is:
 
-@gen.coroutine
-def main():
-    kg_host = os.getenv('GATEWAY_HOST', '192.168.99.100:8888')
+```
+Created kernel KERNEL_ID. Connect other clients with the following command:
+           docker-compose run client --kernel-id=KERNEL_ID
+```
 
-    client = AsyncHTTPClient()
+If you do not specify a `kernel-id` option a new one will be created. The options for the client are:
 
-    response = yield client.fetch(
-        'http://{}/api/kernels'.format(kg_host),
-        method='POST',
-        body='{}'
-    )
-    print('Created kernel')
-    kernel = json_decode(response.body)
-    print(kernel)
-
-    ws_url = 'ws://{}/api/kernels/{}/channels'.format(
-        kg_host,
-        url_escape(kernel['id'])
-    )
-    ws = yield websocket_connect(ws_url)
-    print('Connected to kernel websocket')
-
-    # Send an execute request
-    ws.write_message(json_encode({
-        'header': {
-            'username': '',
-            'version': '5.0',
-            'session': '',
-            'msg_id': 'test-msg',
-            'msg_type': 'execute_request'
-        },
-        'parent_header': {},
-        'channel': 'shell',
-        'content': {
-            'code': 'print("Hello world!")',
-            'silent': False,
-            'store_history': False,
-            'user_expressions' : {}
-        },
-        'metadata': {},
-        'buffers': {}
-    }))
-
-    # Look for stream output for the print in the execute
-    while 1:
-        msg = yield ws.read_message()
-        msg = json_decode(msg)
-        msg_type = msg['msg_type']
-        print('Received message type:', msg_type)
-        parent_msg_id = msg['parent_header']['msg_id']
-        if msg_type == 'stream' and parent_msg_id == 'test-msg':
-            print('  Content:', msg['content']['text'])
-            break
-
-    ws.close()
-
-if __name__ == '__main__':
-    IOLoop.current().run_sync(main)
+```
+--code                           The code to execute on the kernel. (default
+                                 print('hello, world!'))
+--kernel-id                      The id of an existing kernel for connecting
+                                 and executing code. If not specified, a new
+                                 kernel will be created.
+--lang                           The kernel language if a new kernel will be
+                                 created. (default python)
+--times                          The number of times to execute the code
+                                 string. (default 2)
 ```
