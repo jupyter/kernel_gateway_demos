@@ -28,5 +28,7 @@ services:
       context: .
       dockerfile: Dockerfile.client
     image: jupyter/kernel-gateway-demo-client
+    environment:
+      GATEWAY_URL: http://nginx
     depends_on:
       - nginx
