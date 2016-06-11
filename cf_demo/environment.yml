@@ -1,0 +1,10 @@
+# Copyright (c) Jupyter Development Team.
+# Distributed under the terms of the Modified BSD License.
+
+name: got-scotch-api
+dependencies:
+- notebook=4.1
+- pandas=0.17.1
+- pip
+- pip:
+    - jupyter_kernel_gateway==0.5.1
