@@ -13,7 +13,7 @@ help:
 	@echo 'python_api - starts running container of the scotch Python api(use on local machine)'
 
 build:
-	@docker build -no-cache -t $(IMAGE) .
+	@docker build --no-cache -t $(IMAGE) .
 
 r_api:
 	@docker run --rm -ti -p 8888:8888 $(IMAGE) --KernelGatewayApp.seed_uri=/srv/notebooks/scotch_api_r.ipynb
