@@ -10,7 +10,7 @@ RUN echo foo
 
 # Install dashboard layout and preview within Jupyter Notebook
 RUN pip install \
-    "git+https://github.com/jtyberg/kernel_gateway_demos.git@kg_nb_ext#egg=nb2kg&subdirectory=nb2kg" && \
+    "git+https://github.com/jupyter/kernel_gateway_demos.git#egg=nb2kg&subdirectory=nb2kg" && \
     jupyter serverextension enable --py nb2kg --sys-prefix
 
 # Run with remote kernel managers
