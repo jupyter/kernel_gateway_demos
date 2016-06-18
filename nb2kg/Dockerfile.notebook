@@ -1,0 +1,21 @@
+# Copyright (c) Jupyter Development Team.
+# Distributed under the terms of the Modified BSD License.
+
+FROM jupyter/minimal-notebook:8015c88c4b11
+
+# Do the pip installs as the unprivileged notebook user
+USER jovyan
+
+RUN echo foo
+
+# Install dashboard layout and preview within Jupyter Notebook
+RUN pip install \
+    "git+https://github.com/jupyter/kernel_gateway_demos.git#egg=nb2kg&subdirectory=nb2kg" && \
+    jupyter serverextension enable --py nb2kg --sys-prefix
+
+# Run with remote kernel managers
+CMD ["jupyter", "notebook", \
+     "--NotebookApp.ip=0.0.0.0", \
+     "--NotebookApp.session_manager_class=nb2kg.managers.SessionManager", \
+     "--NotebookApp.kernel_manager_class=nb2kg.managers.RemoteKernelManager", \
+     "--NotebookApp.kernel_spec_manager_class=nb2kg.managers.RemoteKernelSpecManager"]
