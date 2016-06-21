@@ -1,0 +1,42 @@
+---
+version: "2"
+services:
+    notebook:
+        build: .
+        ports:
+            - "127.0.0.1:8888:8888"
+        volumes:
+            - ./notebooks:/home/jovyan/work
+    r_api:
+        build: .
+        command: >
+            jupyter kernelgateway 
+            --KernelGatewayApp.api=notebook-http
+            --KernelGatewayApp.ip=0.0.0.0
+            --KernelGatewayApp.seed_uri='/home/jovyan/work/scotch_api_r.ipynb'
+        ports:
+            - "127.0.0.1:9000:8888"
+        volumes:
+            - ./notebooks:/home/jovyan/work
+    python_api:
+        build: .
+        command: >
+            jupyter kernelgateway 
+            --KernelGatewayApp.api=notebook-http
+            --KernelGatewayApp.ip=0.0.0.0
+            --KernelGatewayApp.seed_uri='/home/jovyan/work/scotch_api_python.ipynb'
+        ports:
+            - "127.0.0.1:9001:8888"
+        volumes:
+            - ./notebooks:/home/jovyan/work
+    julia_api:
+        build: .
+        command: >
+            jupyter kernelgateway 
+            --KernelGatewayApp.api=notebook-http
+            --KernelGatewayApp.ip=0.0.0.0
+            --KernelGatewayApp.seed_uri='/home/jovyan/work/scotch_api_julia.ipynb'
+        ports:
+            - "127.0.0.1:9002:8888"
+        volumes:
+            - ./notebooks:/home/jovyan/work
