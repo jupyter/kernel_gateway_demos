@@ -2,6 +2,7 @@
 # Distributed under the terms of the Modified BSD License.
 
 import os
+import json
 
 from tornado import gen, web
 from tornado.escape import json_encode, json_decode, url_escape
@@ -19,9 +20,10 @@ from traitlets import Instance, Unicode, default
 # TODO: Find a better way to specify global configuration options 
 # for a server extension.
 KG_URL = os.getenv('KG_URL', 'http://127.0.0.1:8888/')
-KG_HEADERS = {
+KG_HEADERS = json.loads(os.getenv('KG_HEADERS', '{}'))
+KG_HEADERS.update({
     'Authorization': 'token {}'.format(os.getenv('KG_AUTH_TOKEN', ''))
-}
+})
 
 @gen.coroutine
 def fetch_kg(endpoint, **kwargs):
@@ -81,7 +83,7 @@ class RemoteKernelManager(MappingKernelManager):
         ----------
         kernel_id: kernel UUID
         """
-        return url_path_join(self.kernels_endpoint, str(kernel_id))
+        return url_path_join(self.kernels_endpoint, url_escape(str(kernel_id)))
 
     @gen.coroutine
     def start_kernel(self, kernel_id=None, path=None, **kwargs):
