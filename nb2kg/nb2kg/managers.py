@@ -83,7 +83,7 @@ class RemoteKernelManager(MappingKernelManager):
         ----------
         kernel_id: kernel UUID
         """
-        return url_path_join(self.kernels_endpoint, str(kernel_id))
+        return url_path_join(self.kernels_endpoint, url_escape(str(kernel_id)))
 
     @gen.coroutine
     def start_kernel(self, kernel_id=None, path=None, **kwargs):
