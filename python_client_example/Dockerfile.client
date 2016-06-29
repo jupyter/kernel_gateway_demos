@@ -1,15 +1,8 @@
 # Copyright (c) Jupyter Development Team.
 # Distributed under the terms of the Modified BSD License.
-FROM python:3.5.1
+FROM python:3.5.1-alpine
 
-# make the default assume we're in the docker-compose setup where the 
-# nginx service is available on the default docker network
-ENV GATEWAY_HOST nginx:80
 WORKDIR /src
 RUN pip install tornado
-
 COPY src/* /src/
-
-
-
 ENTRYPOINT ["python", "/src/client.py"]
