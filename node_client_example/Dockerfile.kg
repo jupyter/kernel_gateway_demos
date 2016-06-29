@@ -5,7 +5,7 @@
 FROM jupyter/all-spark-notebook:0017b56d93c9
 
 # install the kernel gateway
-RUN pip install 'jupyter_kernel_gateway==0.5'
+RUN pip install jupyter_kernel_gateway==0.5.*
 
 # run kernel gateway on container start, not notebook server
 EXPOSE 8888
