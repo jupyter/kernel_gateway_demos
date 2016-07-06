@@ -107,4 +107,4 @@ pip uninstall -y nb2kg
 * To move the extension beyond a demo would probably require changes to the [jupyter/notebook](https://github.com/jupyter/notebook) code base.  In particular,
 	* The Notebook kernel API request handlers would need to support asynchronous operation for ALL kernel requests.  The extension currently must replace several manager and handler classes to add this support.
 	* The Notebook server application could provide a hook to make it easier to override the default request handlers (e.g., `/api/kernels`).  [Tornado applications](http://www.tornadoweb.org/en/latest/web.html) pass requests to the first request handler registered for a particular URL path, and the Notebook registers default handlers before extension handlers.
-
+* If your kernel gateway instance is using a self-signed certificate in your development environment, you can turn off certificate validation by setting `VALIDATE_KG_CERT=no` in your environment before starting the notebook server.
