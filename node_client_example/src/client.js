@@ -8,7 +8,9 @@ global.XMLHttpRequest = xmlhttprequest.XMLHttpRequest;
 global.WebSocket = ws;
 var jupyter = require('jupyter-js-services');
 
-var gatewayUrl = process.env.GATEWAY_URL || 'http://192.168.99.100:8888';
+var gatewayUrl = process.env.BASE_GATEWAY_HTTP_URL || 'http://localhost:8888';
+var gatewayWsUrl = process.env.BASE_GATEWAY_WS_URL || 'ws://localhost:8888';
+
 var demoLang = process.env.DEMO_LANG || 'python';
 var demoInfo = {
     python: {
@@ -29,8 +31,13 @@ var demoSrc = fs.readFileSync(demoInfo.filename, {encoding: 'utf-8'});
 console.log('Targeting server:', gatewayUrl);
 console.log('Using example code:', demoInfo.filename);
 
-// extra headers to demo that it can be done
 var ajaxSettings = {
+    // Basic auth params are OK (hardcoding these for the demo nginx proxy)
+    // but they only apply to the HTTP requests made by jupuyter-js-services
+    // at the moment. https://github.com/jupyter/jupyter-js-services/issues/158
+    user: 'fakeuser',
+    password: 'fakepass',
+    // extra headers are OK
     requestHeaders: {
         'X-Some-Header': 'some-value'
     }
@@ -47,6 +54,7 @@ jupyter.getKernelSpecs({
     console.log('Starting kernel:', demoLang)
     jupyter.startNewKernel({
         baseUrl: gatewayUrl,
+        wsUrl: gatewayWsUrl, // passing this separately to demonstrate basic auth
         name: demoInfo.kernelName,
         ajaxSettings: ajaxSettings
     }).then((kernel) => {

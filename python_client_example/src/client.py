@@ -6,7 +6,7 @@ from tornado import gen
 from tornado.escape import json_encode, json_decode, url_escape
 from tornado.websocket import websocket_connect
 from tornado.ioloop import IOLoop
-from tornado.httpclient import AsyncHTTPClient
+from tornado.httpclient import AsyncHTTPClient, HTTPRequest
 from tornado.options import options, parse_command_line, define
 from time import sleep
 from uuid import uuid4
@@ -18,19 +18,27 @@ define("kernel-id", default=None, help="The id of an existing kernel for connect
 
 @gen.coroutine
 def main():
+    # give other services a moment to come up in this example
     sleep(1)
+    
     parse_command_line()
     
-    kg_host = os.getenv('GATEWAY_HOST', '192.168.99.100:80')
-
+    base_url = os.getenv('BASE_GATEWAY_HTTP_URL', 'http://localhost:8888')
+    base_ws_url = os.getenv('BASE_GATEWAY_WS_URL', 'ws://localhost:8888')
+    
+    print(base_url)
+    print(base_ws_url)
+    
     client = AsyncHTTPClient()
     kernel_id = options.kernel_id
     if not kernel_id:
         response = yield client.fetch(
-            'http://{}/api/kernels'.format(kg_host),
+            '{}/api/kernels'.format(base_url),
             method='POST',
+            auth_username='fakeuser',
+            auth_password='fakepass',
             body=json_encode({'name' : options.lang})
-            )
+        )
         kernel = json_decode(response.body)
         kernel_id = kernel['id']
         print(
@@ -39,12 +47,14 @@ def main():
             '''.format(kernel_id)
         )
         
-    ws_url = 'ws://{}/api/kernels/{}/channels'.format(
-        kg_host,
-        url_escape(kernel_id)
+    ws_req = HTTPRequest(url='{}/api/kernels/{}/channels'.format(
+            base_ws_url,
+            url_escape(kernel_id)
+        ),
+        auth_username='fakeuser',
+        auth_password='fakepass'
     )
-    
-    ws = yield websocket_connect(ws_url)
+    ws = yield websocket_connect(ws_req)
     print('Connected to kernel websocket')
     for x in range(0, options.times):
         print('Sending message {} of {}'.format(x+1, options.times))

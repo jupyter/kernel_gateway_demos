@@ -11,7 +11,7 @@ services:
       dockerfile: Dockerfile.nginx
     image: jupyter/kernel-gateway-nginx
     ports:
-      - "8080:80"
+      - "8080:80" # for testing proxied access to the kernel gateway from outside docker
     depends_on:
       - kernel_gateway
 
@@ -19,6 +19,8 @@ services:
     build:
       context: .
       dockerfile: Dockerfile.kg
+    ports:
+      - "8888:8888" # for testing direct access to the kernel gateway from outside docker
     image: jupyter/kernel-gateway
     environment:
       KG_ALLOW_ORIGIN: '*'
@@ -27,8 +29,9 @@ services:
     build:
       context: .
       dockerfile: Dockerfile.client
-    image: jupyter/kernel-gateway-demo-client
     environment:
-      GATEWAY_URL: http://nginx
+      BASE_GATEWAY_HTTP_URL: http://nginx/jupyter/v1/12345678-1234-1234-1234-123456789012
+      # see https://github.com/jupyter/jupyter-js-services/issues/158 about username/password here
+      BASE_GATEWAY_WS_URL: ws://fakeuser:fakepass@nginx/jupyter/v1/12345678-1234-1234-1234-123456789012
     depends_on:
       - nginx
