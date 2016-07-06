@@ -24,13 +24,14 @@ KG_HEADERS = json.loads(os.getenv('KG_HEADERS', '{}'))
 KG_HEADERS.update({
     'Authorization': 'token {}'.format(os.getenv('KG_AUTH_TOKEN', ''))
 })
+VALIDATE_KG_CERT = os.getenv('VALIDATE_KG_CERT') not in ['no', 'false']
 
 @gen.coroutine
 def fetch_kg(endpoint, **kwargs):
     """Make an async request to kernel gateway endpoint."""
     client = AsyncHTTPClient()
     url = url_path_join(KG_URL, endpoint)
-    response = yield client.fetch(url, headers=KG_HEADERS, **kwargs)
+    response = yield client.fetch(url, headers=KG_HEADERS, validate_cert=VALIDATE_KG_CERT, **kwargs)
     raise gen.Return(response)
 
 
