@@ -34,9 +34,9 @@ The purpose of these notebooks is to demonstrate the multilanguage support of th
 
 To test the services, point your web browser (or favorite web client) to one of the API ports above:
 
-* http://127.0.0.1:<port>/scotches - returns a JSON representation of all available scotches
-* http://127.0.0.1:<port>/scotches/Ardbeg - returns a JSON representation of all the features of the queried scotch (Ardbeg)
-* http://127.0.0.1:<port>/scotches/Ardbeg/similar - returns a JSON representation of the most similar scotches to the one requested (Ardbeg)
+* http://127.0.0.1:PORT/scotches - returns a JSON representation of all available scotches
+* http://127.0.0.1:PORT/scotches/Ardbeg - returns a JSON representation of all the features of the queried scotch (Ardbeg)
+* http://127.0.0.1:PORT/scotches/Ardbeg/similar - returns a JSON representation of the most similar scotches to the one requested (Ardbeg)
 
 ### Updating the Notebooks
 
