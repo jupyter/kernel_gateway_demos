@@ -33,5 +33,7 @@ services:
       BASE_GATEWAY_HTTP_URL: http://nginx/jupyter/v1/12345678-1234-1234-1234-123456789012
       # see https://github.com/jupyter/jupyter-js-services/issues/158 about username/password here
       BASE_GATEWAY_WS_URL: ws://fakeuser:fakepass@nginx/jupyter/v1/12345678-1234-1234-1234-123456789012
+      BASE_GATEWAY_USERNAME: fakeuser
+      BASE_GATEWAY_PASSWORD: fakepass
     depends_on:
       - nginx
