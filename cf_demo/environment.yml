@@ -3,8 +3,8 @@
 
 name: got-scotch-api
 dependencies:
-- notebook=4.1
+- notebook=4.2
 - pandas=0.17.1
 - pip
 - pip:
-    - jupyter_kernel_gateway==0.5.1
+    - git+https://github.com/jupyter/kernel_gateway
