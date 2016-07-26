@@ -35,16 +35,26 @@ var ajaxSettings = {
     // Basic auth params are OK (hardcoding these for the demo nginx proxy)
     // but they only apply to the HTTP requests made by jupuyter-js-services
     // at the moment. https://github.com/jupyter/jupyter-js-services/issues/158
-    user: 'fakeuser',
-    password: 'fakepass',
+    // user: 'fakeuser',
+    // password: 'fakepass',
     // extra headers are OK
-    requestHeaders: {
-        'X-Some-Header': 'some-value'
-    }
+    // requestHeaders: {
+    //     'X-Some-Header': 'some-value'
+    // }
 };
 
+if (process.env.BASE_GATEWAY_USERNAME) {
+    ajaxSettings['user'] = process.env.BASE_GATEWAY_USERNAME
+}
+
+if (process.env.BASE_GATEWAY_PASSWORD) {
+    ajaxSettings['password'] = process.env.BASE_GATEWAY_PASSWORD
+}
+
+console.log('ajaxSettings: ', ajaxSettings);
+
 // get info about the available kernels
-jupyter.getKernelSpecs({ 
+jupyter.getKernelSpecs({
     baseUrl: gatewayUrl,
     ajaxSettings: ajaxSettings
 }).then((kernelSpecs) => {
