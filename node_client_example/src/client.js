@@ -31,17 +31,10 @@ var demoSrc = fs.readFileSync(demoInfo.filename, {encoding: 'utf-8'});
 console.log('Targeting server:', gatewayUrl);
 console.log('Using example code:', demoInfo.filename);
 
-var ajaxSettings = {
-    // Basic auth params are OK (hardcoding these for the demo nginx proxy)
-    // but they only apply to the HTTP requests made by jupuyter-js-services
-    // at the moment. https://github.com/jupyter/jupyter-js-services/issues/158
-    // user: 'fakeuser',
-    // password: 'fakepass',
-    // extra headers are OK
-    // requestHeaders: {
-    //     'X-Some-Header': 'some-value'
-    // }
-};
+var ajaxSettings = {};
+
+// For authentication, set the environment variables:
+// BASE_GATEWAY_USERNAME and BASE_GATEWAY_PASSWORD.
 
 if (process.env.BASE_GATEWAY_USERNAME) {
     ajaxSettings['user'] = process.env.BASE_GATEWAY_USERNAME
