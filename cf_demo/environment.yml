@@ -2,9 +2,10 @@
 # Distributed under the terms of the Modified BSD License.
 
 name: got-scotch-api
+channels:
+- conda-forge
+- defaults
 dependencies:
-- notebook=4.1
+- notebook=4.2
 - pandas=0.17.1
-- pip
-- pip:
-    - jupyter_kernel_gateway==0.5.1
+- jupyter_kernel_gateway=1.1

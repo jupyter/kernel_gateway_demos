@@ -1,0 +1,161 @@
+<!doctype html5>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <script src="https://cdn.rawgit.com/download/polymer-cdn/1.5.0/lib/webcomponentsjs/webcomponents-lite.min.js"></script>
+    <link rel="import" href="https://cdn.rawgit.com/download/polymer-cdn/1.5.0/lib/paper-button/paper-button.html">
+    <link rel="import" href="https://cdn.rawgit.com/download/polymer-cdn/1.5.0/lib/paper-dropdown-menu/paper-dropdown-menu.html">
+    <link rel="import" href="https://cdn.rawgit.com/download/polymer-cdn/1.5.0/lib/paper-menu/paper-menu.html">
+    <link rel="import" href="https://cdn.rawgit.com/download/polymer-cdn/1.5.0/lib/paper-item/paper-item.html">
+    <link rel="import" href="https://cdn.rawgit.com/download/polymer-cdn/1.5.0/lib/paper-card/paper-card.html">
+    <link rel="import" href="https://cdn.rawgit.com/download/polymer-cdn/1.5.0/lib/paper-listbox/paper-listbox.html">
+    <link rel="import" href="https://cdn.rawgit.com/download/polymer-cdn/1.5.0/lib/iron-ajax/iron-ajax.html">
+    <link rel="import" href="https://cdn.rawgit.com/download/polymer-cdn/1.5.0/lib/iron-icons/iron-icons.html">
+    <link rel="import" href="https://cdn.rawgit.com/download/polymer-cdn/1.5.0/lib/iron-flex-layout/iron-flex-layout.html">
+    <link rel="import" href="https://cdn.rawgit.com/download/polymer-cdn/1.5.0/lib/iron-flex-layout/iron-flex-layout-classes.html">
+    <link rel="import" href="https://cdn.rawgit.com/download/polymer-cdn/1.5.0/lib/paper-icon-button/paper-icon-button.html">
+    <link rel="import" href="https://cdn.rawgit.com/download/polymer-cdn/1.5.0/lib/google-chart/google-chart.html">
+    <link rel="import" href="https://cdn.rawgit.com/download/polymer-cdn/1.5.0/lib/app-layout/app-header-layout/app-header-layout.html">
+    <link rel="import" href="https://cdn.rawgit.com/download/polymer-cdn/1.5.0/lib/app-layout/app-header/app-header.html">
+    <link rel="import" href="https://cdn.rawgit.com/download/polymer-cdn/1.5.0/lib/app-layout/app-toolbar/app-toolbar.html">
+    <link rel="import" href="https://cdn.rawgit.com/download/polymer-cdn/1.5.0/lib/app-layout/app-scroll-effects/app-scroll-effects.html">
+    <link rel="import" href="https://cdn.rawgit.com/download/polymer-cdn/1.5.0/lib/paper-styles/paper-styles.html">
+    <link rel="import" href="https://cdn.rawgit.com/download/polymer-cdn/1.5.0/lib/paper-styles/classes/global.html">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js"></script>
+    <style is="custom-style">
+        body {
+            margin: 0;
+            background-color: #eee;
+        }
+        app-header {
+          background-color: #4285f4;
+          color: #fff;
+        }
+        :host {
+            display: block;
+            padding: 10px;
+        }
+        
+        [content] {
+            padding: 24px;
+        }
+        
+        paper-card {
+            margin: 10px;
+            padding: 10px;
+            border-radius: 5px;
+            overflow: hidden;
+        }
+        
+        google-chart {
+            width: 100%;
+        }
+        
+        .comment {
+            margin-top: 24px;
+        }
+  </style>
+</head>
+<body unresolved>
+    <template is="dom-bind">
+        <app-header-layout>
+            <iron-ajax
+                auto
+                url="../scotches"
+                handle-as="json"
+                last-response="{{scotches}}"
+                debounce-duration="300"></iron-ajax>
+                
+            <iron-ajax
+                id="profile"
+                auto
+                url="../scotches/[[liked]]"
+                handle-as="json"
+                last-response="{{profile}}"
+                debounce-duration="300"></iron-ajax>
+            
+            <iron-ajax
+                id="similar"
+                auto
+                url="../scotches/[[liked]]/similar"
+                handle-as="json"
+                last-response="{{similar}}"
+                debounce-duration="300"></iron-ajax>
+
+            <app-header effects="waterfall" fixed>
+                <app-toolbar>
+                    <div title>Got Scotch?</div>
+                </app-toolbar>
+            </app-header>
+            
+            <div content>
+                <div class="horizontal layout">
+                    <paper-card>
+                        <div class="card-content">
+                            <paper-dropdown-menu id="liked" label="Pick a scotch you like" selected-item-label="{{liked}}">
+                                <paper-listbox class="dropdown-content" selected="0">
+                                    <template is="dom-repeat" items="[[scotches.names]]"> 
+                                        <paper-item>[[item]]</paper-item>
+                                    </template>
+                                </paper-listbox>
+                            </paper-dropdown-menu>
+                            
+                            <p class="comment">If you like [[liked]] you might also like:</p>
+                            <paper-listbox id="other" selected="{{other}}">
+                                <template is="dom-repeat" items="[[similar.recommendations]]">
+                                    <paper-item>[[item.Name]]</paper-item>
+                                </template>
+                            </paper-listbox>
+                        </div>
+                    </paper-card>
+                
+                    <paper-card class="flex">
+                        <google-chart
+                            class="card-content"
+                            id="profileChart"
+                            type="column"
+                            options='{"title": "Taste Profile", 
+                                      "vAxis": {"minValue" : 0, "maxValue": 4},
+                                      "hAxis": {"slantedText":true, "slantedTextAngle":35},
+                                      "chartArea": {"left": 30},
+                                      "animation": {"duration": 100}
+                                    }'>
+                        </google-chart>
+                    </paper-card>
+                </div>
+            </div>
+        </app-header-layout>
+        
+        <script is="custom">
+            profile.addEventListener('response', function(evt) {
+                var resp = evt.target.lastResponse;
+                var rows = _.map(resp.features, function(val, key) {
+                    return [key, val];
+                });
+                var cols = [["Taste", liked.selectedItemLabel]];
+                profileChart.data = cols.concat(rows);
+            });
+            
+            other.addEventListener('iron-select', function(evt) {
+                var i = evt.target.selected;
+                var features = similar.lastResponse.recommendations[i];
+                var data = _.map(profileChart.data, function(row, i) {
+                    if(i === 0) {
+                        return [row[0], row[1], features.Name];
+                    } else {
+                        return [row[0], row[1], features[row[0]]]
+                    }
+                });
+                profileChart.data = data;
+            });
+            
+            window.addEventListener('resize', function() {
+                profileChart.drawChart();
+            });
+        </script>
+    </template>
+</body>
+</html>
