@@ -296,7 +296,8 @@ class SessionManager(BaseSessionManager):
     kernel_manager = Instance('nb2kg.managers.RemoteKernelManager')
 
     @gen.coroutine
-    def create_session(self, path=None, kernel_name=None, kernel_id=None):
+    def create_session(self, path=None, name=None, type=None,
+                       kernel_name=None, kernel_id=None):
         """Creates a session and returns its model.
         
         Overrides base class method to turn into an async operation.
@@ -312,16 +313,17 @@ class SessionManager(BaseSessionManager):
             pass
         else:
             kernel_id = yield self.start_kernel_for_session(
-                session_id, path, kernel_name
+                session_id, path, name, type, kernel_name,
             )
 
         result = yield self.save_session(
-            session_id, path=path, kernel_id=kernel_id
+            session_id, path=path, name=name, type=type, kernel_id=kernel_id,
         )
         raise gen.Return(result)
 
     @gen.coroutine
-    def save_session(self, session_id, path=None, kernel_id=None):
+    def save_session(self, session_id, path=None, name=None, type=None,
+                     kernel_id=None):
         """Saves the items for the session with the given session_id
         
         Given a session_id (and any other of the arguments), this method
@@ -344,7 +346,7 @@ class SessionManager(BaseSessionManager):
         """
         # This is now an async operation
         session = yield super(SessionManager, self).save_session(
-            session_id=session_id, path=path, kernel_id=kernel_id
+            session_id, path=path, name=name, type=type, kernel_id=kernel_id
         )
         raise gen.Return(session)
 
