@@ -241,6 +241,7 @@ class RemoteKernelManager(MappingKernelManager):
             try:
                 response = client.fetch(kernel_url, 
                     headers=KG_HEADERS,
+                    validate_cert=VALIDATE_KG_CERT,                    
                     method='DELETE'
                 )
             except HTTPError:
