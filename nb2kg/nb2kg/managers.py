@@ -111,7 +111,10 @@ class RemoteKernelManager(MappingKernelManager):
             response = yield fetch_kg(
                 self.kernels_endpoint,
                 method='POST',
-                body=json_encode({'name' : kernel_name})
+                body=json_encode({
+                    'name': kernel_name,
+                    'env': {k:v for (k,v) in dict(os.environ).items() if k.startswith('KERNEL_')}
+                })
             )
             kernel = json_decode(response.body)
             kernel_id = kernel['id']
