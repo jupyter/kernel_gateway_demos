@@ -113,7 +113,7 @@ class RemoteKernelManager(MappingKernelManager):
                 method='POST',
                 body=json_encode({
                     'name': kernel_name,
-                    'env': {k:v for (k,v) in dict(os.environ).items() if k.startswith('KERNEL_')}
+                    'env': {k:v for (k,v) in dict(os.environ).items() if k.startswith('KERNEL_') or k in os.environ['KG_WHITELIST'].split(":")}
                 })
             )
             kernel = json_decode(response.body)
