@@ -27,7 +27,8 @@ KG_HEADERS.update({
     'Authorization': 'token {}'.format(os.getenv('KG_AUTH_TOKEN', ''))
 })
 VALIDATE_KG_CERT = os.getenv('VALIDATE_KG_CERT') not in ['no', 'false']
-
+KG_HTTP_USER = os.getenv('KG_HTTP_USER', '')
+KG_HTTP_PASS = os.getenv('KG_HTTP_PASS', '')
 
 class WebSocketChannelsHandler(WebSocketHandler, IPythonHandler):
 
@@ -108,7 +109,7 @@ class KernelGatewayWSClient(LoggingConfigurable):
             'channels'
         )
         self.log.info('Connecting to {}'.format(ws_url))
-        request = HTTPRequest(ws_url, headers=KG_HEADERS, validate_cert=VALIDATE_KG_CERT)
+        request = HTTPRequest(ws_url, headers=KG_HEADERS, validate_cert=VALIDATE_KG_CERT, auth_username=KG_HTTP_USER, auth_password=KG_HTTP_PASS)
         self.ws_future = websocket_connect(request)
         self.ws = yield self.ws_future
         # TODO: handle connection errors/timeout
