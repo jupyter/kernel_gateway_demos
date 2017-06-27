@@ -4,7 +4,7 @@ The code in this example shows how to connect multiple clients to a kernel. To g
 
 ```
 git clone https://github.com/jupyter/kernel_gateway_demos
-cd kernel_gateway_demos/python_client_advanced_example
+cd kernel_gateway_demos/python_client_example
 docker-compose build
 docker-compose up
 ```
