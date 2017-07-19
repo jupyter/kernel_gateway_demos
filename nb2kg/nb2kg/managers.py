@@ -34,7 +34,10 @@ def fetch_kg(endpoint, **kwargs):
     """Make an async request to kernel gateway endpoint."""
     client = AsyncHTTPClient()
     url = url_path_join(KG_URL, endpoint)
-    response = yield client.fetch(url, headers=KG_HEADERS, validate_cert=VALIDATE_KG_CERT, client_key=KG_CLIENT_KEY, client_cert=KG_CLIENT_CERT, ca_certs=KG_CLIENT_CA, **kwargs)
+    if KG_CLIENT_CERT:
+        response = yield client.fetch(url, headers=KG_HEADERS, validate_cert=VALIDATE_KG_CERT, client_key=KG_CLIENT_KEY, client_cert=KG_CLIENT_CERT, ca_certs=KG_CLIENT_CA, **kwargs)
+    else:
+        response = yield client.fetch(url, headers=KG_HEADERS, validate_cert=VALIDATE_KG_CERT, **kwargs)
     raise gen.Return(response)
 
 class RemoteKernelManager(MappingKernelManager):

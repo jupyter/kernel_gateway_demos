@@ -110,7 +110,10 @@ class KernelGatewayWSClient(LoggingConfigurable):
             'channels'
         )
         self.log.info('Connecting to {}'.format(ws_url))
-        request = HTTPRequest(ws_url, headers=KG_HEADERS, validate_cert=VALIDATE_KG_CERT, client_key=KG_CLIENT_KEY, client_cert=KG_CLIENT_CERT, ca_certs=KG_CLIENT_CA)
+        if KG_CLIENT_KEY:
+	    request = HTTPRequest(ws_url, headers=KG_HEADERS, validate_cert=VALIDATE_KG_CERT, client_key=KG_CLIENT_KEY, client_cert=KG_CLIENT_CERT, ca_certs=KG_CLIENT_CA)
+        else:
+	    request = HTTPRequest(ws_url, headers=KG_HEADERS, validate_cert=VALIDATE_KG_CERT)
         self.ws_future = websocket_connect(request)
         self.ws = yield self.ws_future
         # TODO: handle connection errors/timeout
