@@ -4,7 +4,7 @@
 import os
 import json
 
-from tornado import gen, web
+from tornado import gen
 from tornado.escape import json_encode, json_decode, url_escape
 from tornado.httpclient import HTTPClient, AsyncHTTPClient, HTTPError
 
@@ -28,12 +28,19 @@ VALIDATE_KG_CERT = os.getenv('VALIDATE_KG_CERT') not in ['no', 'false']
 KG_HTTP_USER = os.getenv('KG_HTTP_USER', '')
 KG_HTTP_PASS = os.getenv('KG_HTTP_PASS', '')
 
+KG_CONNECT_TIMEOUT = float(os.getenv('KG_CONNECT_TIMEOUT', 20.0))
+KG_REQUEST_TIMEOUT = float(os.getenv('KG_REQUEST_TIMEOUT', 20.0))
+
+
 @gen.coroutine
 def fetch_kg(endpoint, **kwargs):
     """Make an async request to kernel gateway endpoint."""
     client = AsyncHTTPClient()
     url = url_path_join(KG_URL, endpoint)
-    response = yield client.fetch(url, headers=KG_HEADERS, validate_cert=VALIDATE_KG_CERT, auth_username=KG_HTTP_USER, auth_password=KG_HTTP_PASS, **kwargs)
+
+    response = yield client.fetch(url, headers=KG_HEADERS, validate_cert=VALIDATE_KG_CERT,
+                                  connect_timeout=KG_CONNECT_TIMEOUT,
+                                  auth_username=KG_HTTP_USER, auth_password=KG_HTTP_PASS, **kwargs)
     raise gen.Return(response)
 
 
@@ -110,14 +117,14 @@ class RemoteKernelManager(MappingKernelManager):
         if kernel_id is None:
             kernel_name = kwargs.get('kernel_name', 'python3')
             self.log.info("Request new kernel at: %s" % self.kernels_endpoint)
-            response = yield fetch_kg(
-                self.kernels_endpoint,
-                method='POST',
-                body=json_encode({
-                    'name': kernel_name,
-                    'env': {k:v for (k,v) in dict(os.environ).items() if k.startswith('KERNEL_') or k in os.environ['KG_ENV_WHITELIST'].split(",")}
-                })
-            )
+            # try
+            kernel_env = {k: v for (k, v) in dict(os.environ).items() if k.startswith('KERNEL_')
+                        or k in os.environ.get('KG_ENV_WHITELIST', '').split(",")}
+            json_body = json_encode({'name': kernel_name, 'env': kernel_env})
+
+            response = yield fetch_kg(self.kernels_endpoint, method='POST',
+                                      request_timeout=KG_REQUEST_TIMEOUT,
+                                      body=json_body)
             kernel = json_decode(response.body)
             kernel_id = kernel['id']
             self.log.info("Kernel started: %s" % kernel_id)
@@ -140,7 +147,7 @@ class RemoteKernelManager(MappingKernelManager):
         kernel_url = self._kernel_id_to_url(kernel_id)
         self.log.info("Request kernel at: %s" % kernel_url)
         try:
-            response = yield fetch_kg(kernel_url, method='GET')
+            response = yield fetch_kg(kernel_url, request_timeout=KG_REQUEST_TIMEOUT, method='GET')
         except HTTPError as error:
             if error.code == 404:
                 self.log.info("Kernel not found at: %s" % kernel_url)
@@ -226,12 +233,10 @@ class RemoteKernelManager(MappingKernelManager):
         self.log.info("Request interrupt kernel: %s", kernel_id)
         kernel_url = self._kernel_id_to_url(kernel_id) + '/interrupt'
         self.log.info("Request restart kernel at: %s", kernel_url)
-        response = yield fetch_kg(kernel_url,
-            method='POST',
-            body=json_encode({})
-        )
-        self.log.info("Interrupt kernel response: %d %s",
-            response.code, response.reason)
+        response = yield fetch_kg(kernel_url, method='POST',
+                                  request_timeout=float(KG_REQUEST_TIMEOUT * 12),
+                                  body=json_encode({}))
+        self.log.info("Interrupt kernel response: %d %s", response.code, response.reason)
 
     def shutdown_all(self):
         """Shutdown all kernels."""
@@ -244,11 +249,10 @@ class RemoteKernelManager(MappingKernelManager):
             kernel_url = url_path_join(KG_URL, self._kernel_id_to_url(kernel_id))
             self.log.info("Request delete kernel at: %s", kernel_url)
             try:
-                response = client.fetch(kernel_url, 
-                    headers=KG_HEADERS,
-                    validate_cert=VALIDATE_KG_CERT,                    
-                    method='DELETE'
-                )
+                response = client.fetch(kernel_url, headers=KG_HEADERS,
+                                        method='DELETE', validate_cert=VALIDATE_KG_CERT,
+                                        auth_username=KG_HTTP_USER, auth_password=KG_HTTP_PASS,
+                                        connect_timeout=KG_CONNECT_TIMEOUT, request_timeout=KG_REQUEST_TIMEOUT)
             except HTTPError:
                 pass
             self.log.info("Delete kernel response: %d %s", 
@@ -256,7 +260,6 @@ class RemoteKernelManager(MappingKernelManager):
         client.close()
 
 class RemoteKernelSpecManager(KernelSpecManager):
-
     kernelspecs_endpoint_env = 'KG_KERNELSPECS_ENDPOINT'
     kernelspecs_endpoint = Unicode(config=True,
         help="""The kernel gateway API endpoint for accessing kernelspecs 
@@ -298,7 +301,6 @@ class RemoteKernelSpecManager(KernelSpecManager):
 
 
 class SessionManager(BaseSessionManager):
-
     kernel_manager = Instance('nb2kg.managers.RemoteKernelManager')
 
     @gen.coroutine
