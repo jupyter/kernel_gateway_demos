@@ -117,7 +117,6 @@ class RemoteKernelManager(MappingKernelManager):
         if kernel_id is None:
             kernel_name = kwargs.get('kernel_name', 'python3')
             self.log.info("Request new kernel at: %s" % self.kernels_endpoint)
-            # try
             kernel_env = {k: v for (k, v) in dict(os.environ).items() if k.startswith('KERNEL_')
                         or k in os.environ.get('KG_ENV_WHITELIST', '').split(",")}
             json_body = json_encode({'name': kernel_name, 'env': kernel_env})

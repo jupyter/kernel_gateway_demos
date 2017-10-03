@@ -6,6 +6,9 @@ FROM jupyter/minimal-notebook:fa77fe99579b
 # Do the pip installs as the unprivileged notebook user
 USER jovyan
 
+# Upgrade pip
+RUN pip install --upgrade pip
+
 # Install dashboard layout and preview within Jupyter Notebook
 ADD . /src
 RUN pip install /src && \
