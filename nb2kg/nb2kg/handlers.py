@@ -11,12 +11,11 @@ from tornado import gen, web
 from tornado.concurrent import Future
 from tornado.ioloop import IOLoop
 from tornado.websocket import WebSocketHandler, websocket_connect
-from tornado.httpclient import HTTPRequest, HTTPError
-from tornado.escape import json_encode, json_decode, url_escape
+from tornado.httpclient import HTTPRequest
+from tornado.escape import url_escape
 
 from ipython_genutils.py3compat import cast_unicode
 from jupyter_client.session import Session
-from traitlets import Unicode, default
 from traitlets.config.configurable import LoggingConfigurable
 
 # TODO: Find a better way to specify global configuration options 
@@ -29,6 +28,11 @@ KG_HEADERS.update({
 VALIDATE_KG_CERT = os.getenv('VALIDATE_KG_CERT') not in ['no', 'false']
 KG_HTTP_USER = os.getenv('KG_HTTP_USER', '')
 KG_HTTP_PASS = os.getenv('KG_HTTP_PASS', '')
+
+# Get env variables to handle timeout of request and connection
+KG_CONNECT_TIMEOUT = float(os.getenv('KG_CONNECT_TIMEOUT', 20.0))
+KG_REQUEST_TIMEOUT = float(os.getenv('KG_REQUEST_TIMEOUT', 20.0))
+
 
 class WebSocketChannelsHandler(WebSocketHandler, IPythonHandler):
 
@@ -109,7 +113,10 @@ class KernelGatewayWSClient(LoggingConfigurable):
             'channels'
         )
         self.log.info('Connecting to {}'.format(ws_url))
-        request = HTTPRequest(ws_url, headers=KG_HEADERS, validate_cert=VALIDATE_KG_CERT, auth_username=KG_HTTP_USER, auth_password=KG_HTTP_PASS)
+        request = HTTPRequest(ws_url, headers=KG_HEADERS, validate_cert=VALIDATE_KG_CERT,
+                              auth_username=KG_HTTP_USER, auth_password=KG_HTTP_PASS,
+                              connect_timeout=KG_CONNECT_TIMEOUT,
+                              request_timeout=KG_REQUEST_TIMEOUT)
         self.ws_future = websocket_connect(request)
         self.ws = yield self.ws_future
         # TODO: handle connection errors/timeout
