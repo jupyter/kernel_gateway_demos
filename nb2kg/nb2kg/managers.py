@@ -216,12 +216,8 @@ class RemoteKernelManager(MappingKernelManager):
         self.log.info("Request restart kernel: %s", kernel_id)
         kernel_url = self._kernel_id_to_url(kernel_id) + '/restart'
         self.log.info("Request restart kernel at: %s", kernel_url)
-        # Here 10 is used as the multiplier to increase the request timeout limit for kernel restart.
-        response = yield fetch_kg(kernel_url, method='POST',
-                                  request_timeout=float(KG_REQUEST_TIMEOUT) * 10,
-                                  body=json_encode({}))
-        self.log.info("Restart kernel response: %d %s",
-            response.code, response.reason)
+        response = yield fetch_kg(kernel_url, method='POST', body=json_encode({}))
+        self.log.info("Restart kernel response: %d %s", response.code, response.reason)
 
     @gen.coroutine
     def interrupt_kernel(self, kernel_id, **kwargs):
@@ -235,10 +231,7 @@ class RemoteKernelManager(MappingKernelManager):
         self.log.info("Request interrupt kernel: %s", kernel_id)
         kernel_url = self._kernel_id_to_url(kernel_id) + '/interrupt'
         self.log.info("Request interrupt kernel at: %s", kernel_url)
-        # Here 10 is used as the multiplier to increase the request timeout limit for kernel interrupt.
-        response = yield fetch_kg(kernel_url, method='POST',
-                                  request_timeout=float(KG_REQUEST_TIMEOUT) * 10,
-                                  body=json_encode({}))
+        response = yield fetch_kg(kernel_url, method='POST', body=json_encode({}))
         self.log.info("Interrupt kernel response: %d %s", response.code, response.reason)
 
     def shutdown_all(self):
