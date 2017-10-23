@@ -129,7 +129,8 @@ class KernelGatewayWSClient(LoggingConfigurable):
         if KG_CLIENT_KEY:
             parameters["client_key"] = KG_CLIENT_KEY
             parameters["client_cert"] = KG_CLIENT_CERT
-            parameters["ca_certs"] = KG_CLIENT_CA
+            if KG_CLIENT_CA:
+                parameters["ca_certs"] = KG_CLIENT_CA
         request = HTTPRequest(ws_url, **parameters)
         self.ws_future = websocket_connect(request)
         self.ws = yield self.ws_future
