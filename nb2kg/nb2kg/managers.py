@@ -46,7 +46,8 @@ def fetch_kg(endpoint, **kwargs):
     if KG_CLIENT_CERT:
         kwargs["client_key"] = kwargs.get("client_key", KG_CLIENT_KEY)
         kwargs["client_cert"] = kwargs.get("client_cert", KG_CLIENT_CERT)
-        kwargs["ca_certs"] = kwargs.get("ca_certs", KG_CLIENT_CA)
+        if KG_CLIENT_CA:
+            kwargs["ca_certs"] = kwargs.get("ca_certs", KG_CLIENT_CA)
     kwargs['connect_timeout'] = kwargs.get('connect_timeout', KG_CONNECT_TIMEOUT)
     kwargs['request_timeout'] = kwargs.get('request_timeout', KG_REQUEST_TIMEOUT)
     kwargs['headers'] = kwargs.get('headers', KG_HEADERS)
