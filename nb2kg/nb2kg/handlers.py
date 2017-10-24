@@ -26,6 +26,11 @@ KG_HEADERS.update({
     'Authorization': 'token {}'.format(os.getenv('KG_AUTH_TOKEN', ''))
 })
 VALIDATE_KG_CERT = os.getenv('VALIDATE_KG_CERT') not in ['no', 'false']
+
+KG_CLIENT_KEY = os.getenv('KG_CLIENT_KEY')
+KG_CLIENT_CERT = os.getenv('KG_CLIENT_CERT')
+KG_CLIENT_CA = os.getenv('KG_CLIENT_CA')
+
 KG_HTTP_USER = os.getenv('KG_HTTP_USER', '')
 KG_HTTP_PASS = os.getenv('KG_HTTP_PASS', '')
 
@@ -113,10 +118,20 @@ class KernelGatewayWSClient(LoggingConfigurable):
             'channels'
         )
         self.log.info('Connecting to {}'.format(ws_url))
-        request = HTTPRequest(ws_url, headers=KG_HEADERS, validate_cert=VALIDATE_KG_CERT,
-                              auth_username=KG_HTTP_USER, auth_password=KG_HTTP_PASS,
-                              connect_timeout=KG_CONNECT_TIMEOUT,
-                              request_timeout=KG_REQUEST_TIMEOUT)
+        parameters = {
+          "headers" : KG_HEADERS,
+          "validate_cert" : VALIDATE_KG_CERT,
+          "auth_username" : KG_HTTP_USER, 
+          "auth_password" : KG_HTTP_PASS,
+          "connect_timeout" : KG_CONNECT_TIMEOUT,
+          "request_timeout" : KG_REQUEST_TIMEOUT
+        }
+        if KG_CLIENT_KEY:
+            parameters["client_key"] = KG_CLIENT_KEY
+            parameters["client_cert"] = KG_CLIENT_CERT
+            if KG_CLIENT_CA:
+                parameters["ca_certs"] = KG_CLIENT_CA
+        request = HTTPRequest(ws_url, **parameters)
         self.ws_future = websocket_connect(request)
         self.ws = yield self.ws_future
         # TODO: handle connection errors/timeout
