@@ -112,7 +112,7 @@ class KernelGatewayWSClient(LoggingConfigurable):
     @gen.coroutine
     def _connect(self, kernel_id):
         ws_url = url_path_join(
-            KG_URL.replace('http', 'ws'), 
+            os.getenv('KG_WS_URL', KG_URL.replace('http', 'ws')),
             '/api/kernels', 
             url_escape(kernel_id),
             'channels'
