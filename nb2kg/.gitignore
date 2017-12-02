@@ -63,3 +63,6 @@ __pycache__/
 etc/notebooks/*
 .DS_Store
 .ipynb_checkpoints/
+
+IDE stuff
+.idea/

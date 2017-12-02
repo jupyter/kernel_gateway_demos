@@ -14,7 +14,7 @@ with open(os.path.join(HERE, 'nb2kg', '_version.py')) as f:
     exec(f.read(), {}, VERSION_NS)
 
 install_requires=[
-    'notebook>=4.2.0,<5.0',
+    'notebook>=4.2.0,<6.0',
 ]
 
 setup_args = dict(
