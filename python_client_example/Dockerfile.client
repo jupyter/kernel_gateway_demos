@@ -3,6 +3,6 @@
 FROM python:latest
 
 WORKDIR /src
-RUN pip install tornado
+RUN pip install --no-cache-dir tornado
 COPY src/* /src/
 ENTRYPOINT ["python", "/src/client.py"]

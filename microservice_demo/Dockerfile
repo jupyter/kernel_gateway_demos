@@ -4,7 +4,7 @@ FROM jupyter/datascience-notebook
 MAINTAINER Jupyter Project <jupyter@googlegroups.com>
 
 # Install Kernel Gateway
-RUN pip install jupyter-kernel-gateway
+RUN pip install --no-cache-dir jupyter-kernel-gateway
 
 # Configure container startup
 ENTRYPOINT ["tini", "--", "jupyter", "kernelgateway", "--KernelGatewayApp.api=notebook-http", "--KernelGatewayApp.ip=0.0.0.0", "--KernelGatewayApp.seed_uri=/srv/notebooks/meetup_service.ipynb"]
