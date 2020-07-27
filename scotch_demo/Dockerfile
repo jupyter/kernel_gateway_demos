@@ -4,4 +4,4 @@ FROM jupyter/datascience-notebook:8015c88c4b11
 RUN julia -e 'Pkg.add("JSON")' && julia -e 'Pkg.add("Requests")'
 
 # Install latest stable Kernel Gateway
-RUN pip install jupyter_kernel_gateway
+RUN pip install --no-cache-dir jupyter_kernel_gateway

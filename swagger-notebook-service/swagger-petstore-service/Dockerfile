@@ -3,7 +3,7 @@
 FROM jupyter/all-spark-notebook:dbb9c7b50531
 
 # Install Kernel Gateway
-RUN pip install git+https://github.com/jupyter-incubator/kernel_gateway.git
+RUN pip install --no-cache-dir jupyter_kernel_gateway
 
 # Configure container startup
 ENTRYPOINT ["tini", "--", "jupyter", "kernelgateway"]
